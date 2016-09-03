@@ -1,1 +1,182 @@
-/home/jack/.config/i3/config
+# i3 config file (v4)
+#
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+set $mod Mod4
+font pango:DejaVu Sans Mono 8
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec konsole 
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# start dmenu (a program launcher)
+bindsym $mod+d exec dmenu_run
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod+h split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+#file manager
+bindsym $mod+e exec qtfm
+
+bindsym $mod+Tab exec google-chrome-stable
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# Screen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+
+# Keyboard brightness
+bindsym XF86KbdBrightnessUp exec kb-light.py +
+bindsym XF86KbdBrightnessDown exec kb-light.py -
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace
+bindsym $mod+Shift+r restart
+# exit i3
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Do you really want to log out?' -b 'Yes' 'i3-msg exit'"
+
+##Begin resize 
+mode "resize" {
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+##End resize
+
+
+#global screen locker
+set $Locker i3lock-fancy & sleep 1
+bindsym $mod+l exec $Locker
+
+##Begin power menu
+set $mode_system System: (l) lock, (shift+l) logout, (s) suspend, (h) hibernate, (r) restart i3, (shift+r) reboot, (shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $Locker, mode "default"
+    bindsym shift+l exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id $Locker & systemctl suspend, mode "default"
+    bindsym h exec --no-startup-id $Locker & systemctl hibernate, mode "default"
+    bindsym r restart #restart i3
+    bindsym shift+r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"  
+
+     bindsym Return mode "default"
+         bindsym Escape mode "default"
+    }
+
+bindsym $mod+Pause mode "$mode_system"
+bindsym XF86PowerOff mode "$mode_system"
+##End power menu
+
+##Begin tools menu
+set $mode_tools Tools: (1) Reset WiFi, (2) wifi-menu, (0) pacman -Syu
+mode "$mode_tools" {
+    bindsym 1 exec konsole -e sudo systemctl restart netctl-auto@wlp1s0, mode "default"
+    bindsym 2 exec konsole -e sudo wifi-menu, mode "default"
+    bindsym 0 exec konsole -e sudo apacman -Syu, mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym F1 mode "default"
+}
+bindsym F1 mode "$mode_tools"
+##End tools menu
+
+##Begin layout
+set $mode_layout Layout: (1) stacking, (2) tabbed, (3) split
+mode "$mode_layout" {
+	bindsym 1 layout stacking, mode "default"
+	bindsym 2 layout tabbed, mode "default"
+	bindsym 3 layout toggle split, mode "default"
+	bindsym Escape mode "default"
+	bindsym Return mode "default"
+	bindsym F2 mode "default"
+}
+bindsym F2 mode "$mode_layout"
+##End layout
+
+# Start i3bar
+bar {
+	font pango:DejaVu Sans Mono, Icons 10
+	status_command i3status
+}
